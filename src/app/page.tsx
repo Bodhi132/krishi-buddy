@@ -4,8 +4,13 @@ import { HeroBanner } from './component/HeroBanner';
 import { ServiceCard } from './component/ServiceCard';
 import { BottomNavigation } from './component/BottomNavigation';
 import { ServiceIcon } from './component/ServiceIcon';
+import { useRouter } from 'next/navigation';
+import { link } from 'fs';
 
 const HomePage: React.FC = () => {
+
+  const router = useRouter()
+
   const bannerData = [
     {
       id: 1,
@@ -34,40 +39,47 @@ const HomePage: React.FC = () => {
   ];
 
   const services = [
-    { 
-      iconSrc: '/icons/homepage/img1.svg', 
-      iconAlt: 'Soil Care', 
-      title: 'Soil Care\nRecommendation' 
+    {
+      iconSrc: '/icons/homepage/img1.svg',
+      iconAlt: 'Soil Care',
+      title: 'Soil Care\nRecommendation',
+      link:'Soil-Care-Recommendation'
     },
-    { 
-      iconSrc: '/icons/homepage/img2.svg', 
-      iconAlt: 'Fertilizer', 
-      title: 'Fertilizer Guidance' 
+    {
+      iconSrc: '/icons/homepage/img2.svg',
+      iconAlt: 'Fertilizer',
+      title: 'Fertilizer Guidance',
+      link:'Fertilizer-Guidance'
     },
-    { 
-      iconSrc: '/icons/homepage/img3.svg', 
-      iconAlt: 'Pest Detection', 
-      title: 'Pest detection' 
+    {
+      iconSrc: '/icons/homepage/img3.svg',
+      iconAlt: 'Pest Detection',
+      title: 'Pest detection',
+      link:'Pest-detection'
     },
-    { 
-      iconSrc: '/icons/homepage/img4.svg', 
-      iconAlt: 'Pest Advisories', 
-      title: 'Pest Advisories' 
+    {
+      iconSrc: '/icons/homepage/img4.svg',
+      iconAlt: 'Pest Advisories',
+      title: 'Pest Advisories',
+      link:"Pest-Advisories" 
     },
-    { 
-      iconSrc: '/icons/homepage/img5.svg', 
-      iconAlt: 'Video Guides', 
-      title: 'Video Guides' 
+    {
+      iconSrc: '/icons/homepage/img5.svg',
+      iconAlt: 'Video Guides',
+      title: 'Video Guides',
+      link: 'video-guides'
     },
-    { 
-      iconSrc: '/icons/homepage/img6.svg', 
-      iconAlt: 'Market Updates', 
-      title: 'Market Updates' 
+    {
+      iconSrc: '/icons/homepage/img6.svg',
+      iconAlt: 'Market Updates',
+      title: 'Market Updates',
+      link:'Market-Updates'
     },
-    { 
-      iconSrc: '/icons/homepage/img7.svg', 
-      iconAlt: 'Contact Us', 
-      title: 'Contact Us' 
+    {
+      iconSrc: '/icons/homepage/img7.svg',
+      iconAlt: 'Contact Us',
+      title: 'Contact Us',
+      link:'Contact-Us'
     },
   ];
 
@@ -83,14 +95,15 @@ const HomePage: React.FC = () => {
             <ServiceCard
               key={index}
               icon={
-                <ServiceIcon 
+                <ServiceIcon
                   src={service.iconSrc}
                   alt={service.iconAlt}
                   size={32}
                 />
               }
               title={service.title}
-              onClick={() => console.log(`Clicked on ${service.title}`)}
+              // onClick={() => console.log(`Clicked on ${service.title}`)}
+              onClick={() => router.push(`/${service.link}`)}
             />
           ))}
         </div>
