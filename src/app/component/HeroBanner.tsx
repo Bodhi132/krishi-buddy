@@ -1,7 +1,6 @@
-"use client"
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
+"use client";
+import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface BannerItem {
   id: number;
@@ -14,35 +13,48 @@ interface BannerItem {
 
 interface HeroBannerProps {
   banners: BannerItem[];
+  interval?: number; // allow custom interval
 }
 
-export const HeroBanner: React.FC<HeroBannerProps> = ({ banners }) => {
+export const HeroBanner: React.FC<HeroBannerProps> = ({
+  banners,
+  interval = 5000, // default 5s
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? banners.length - 1 : prevIndex - 1
     );
   };
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === banners.length - 1 ? 0 : prevIndex + 1
     );
   };
+
+  // Auto-slide effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      goToNext();
+    }, interval);
+
+    return () => clearInterval(timer); // cleanup
+  }, [interval, banners.length]);
 
   const currentBanner = banners[currentIndex];
 
   return (
     <div className="relative mx-4 mt-4 mb-6">
-      <div 
+      <div
         className="relative rounded-2xl p-6 text-white overflow-hidden min-h-[200px]"
         style={{
-          background: currentBanner.backgroundImage 
+          background: currentBanner.backgroundImage
             ? `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${currentBanner.backgroundImage})`
-            : 'linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #15803d 100%)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+            : "linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #15803d 100%)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         {/* Navigation Buttons */}
@@ -66,31 +78,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ banners }) => {
         <div className="relative z-10">
           <h1 className="text-lg font-bold mb-1">{currentBanner.title}</h1>
           <h2 className="text-sm italic mb-3">{currentBanner.subtitle}</h2>
-          
+
           <div className="bg-yellow-400 text-black px-3 py-2 rounded-lg inline-block mb-2">
             <div className="text-xs font-bold">{currentBanner.description}</div>
             <div className="text-xs font-medium">{currentBanner.targetText}</div>
           </div>
         </div>
-        
+
         {/* Decorative farmer illustration placeholder */}
         <div className="absolute bottom-4 right-4 w-16 h-16 bg-green-600 rounded-full opacity-30"></div>
-
-        {/* Dots Indicator */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-          {banners.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex 
-                  ? 'bg-white' 
-                  : 'bg-white bg-opacity-50'
-              }`}
-              aria-label={`Go to banner ${index + 1}`}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );

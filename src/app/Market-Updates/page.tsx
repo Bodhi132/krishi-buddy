@@ -101,7 +101,7 @@ const commodityPrices: Commodity[] = [
   },
 ];
 
-const nearbyMarkets: Market[] = [
+const allMarkets: Market[] = [
   {
     id: 1,
     name: "Koley Market, Sealdah",
@@ -138,6 +138,150 @@ const nearbyMarkets: Market[] = [
     rating: 4.0,
     type: "Wholesale",
   },
+  {
+    id: 5,
+    name: "New Market, Esplanade",
+    priceRange: "₹1800 – ₹3500",
+    distance: "3.2 km",
+    pincode: "700001",
+    rating: 4.1,
+    type: "Retail",
+  },
+  {
+    id: 6,
+    name: "Shyambazar Sabzi Market",
+    priceRange: "₹1500 – ₹3200",
+    distance: "6.8 km",
+    pincode: "700004",
+    rating: 3.9,
+    type: "Retail",
+  },
+  {
+    id: 7,
+    name: "Hatibagan Market",
+    priceRange: "₹1700 – ₹3000",
+    distance: "4.5 km",
+    pincode: "700003",
+    rating: 3.7,
+    type: "Retail",
+  },
+  {
+    id: 8,
+    name: "Gariahat Market",
+    priceRange: "₹2000 – ₹3400",
+    distance: "9.2 km",
+    pincode: "700029",
+    rating: 4.3,
+    type: "Retail",
+  },
+  {
+    id: 9,
+    name: "Lake Market",
+    priceRange: "₹2100 – ₹3600",
+    distance: "7.9 km",
+    pincode: "700029",
+    rating: 4.0,
+    type: "Retail",
+  },
+  {
+    id: 10,
+    name: "Maniktala Market",
+    priceRange: "₹1600 – ₹2900",
+    distance: "5.4 km",
+    pincode: "700054",
+    rating: 3.6,
+    type: "Retail",
+  },
+  {
+    id: 11,
+    name: "Mechua Bazar",
+    priceRange: "₹2300 – ₹3800",
+    distance: "1.8 km",
+    pincode: "700073",
+    rating: 4.4,
+    type: "Wholesale",
+  },
+  {
+    id: 12,
+    name: "Jorasanko Market",
+    priceRange: "₹1400 – ₹2800",
+    distance: "3.7 km",
+    pincode: "700007",
+    rating: 3.5,
+    type: "Retail",
+  },
+  {
+    id: 13,
+    name: "Belgachhia Wholesale Market",
+    priceRange: "₹2400 – ₹3700",
+    distance: "11.3 km",
+    pincode: "700037",
+    rating: 4.2,
+    type: "Wholesale",
+  },
+  {
+    id: 14,
+    name: "Sovabazar Market",
+    priceRange: "₹1900 – ₹3100",
+    distance: "4.1 km",
+    pincode: "700005",
+    rating: 3.8,
+    type: "Retail",
+  },
+  {
+    id: 15,
+    name: "Ultadanga Market",
+    priceRange: "₹1700 – ₹3000",
+    distance: "8.7 km",
+    pincode: "700067",
+    rating: 3.9,
+    type: "Retail",
+  },
+  {
+    id: 16,
+    name: "Bagbazar Market",
+    priceRange: "₹1800 – ₹3200",
+    distance: "4.8 km",
+    pincode: "700003",
+    rating: 3.7,
+    type: "Retail",
+  },
+  {
+    id: 17,
+    name: "Posta Market",
+    priceRange: "₹2000 – ₹3500",
+    distance: "2.9 km",
+    pincode: "700007",
+    rating: 4.0,
+    type: "Wholesale",
+  },
+  {
+    id: 18,
+    name: "Entally Market",
+    priceRange: "₹1600 – ₹2900",
+    distance: "6.2 km",
+    pincode: "700014",
+    rating: 3.6,
+    type: "Retail",
+  },
+  {
+    id: 19,
+    name: "Bara Bazar Central",
+    priceRange: "₹2200 – ₹4000",
+    distance: "2.1 km",
+    pincode: "700007",
+    rating: 4.6,
+    type: "Wholesale",
+  },
+  {
+    id: 20,
+    name: "Park Street Market",
+    priceRange: "₹2500 – ₹3900",
+    distance: "5.3 km",
+    pincode: "700016",
+    rating: 4.1,
+    type: "Retail",
+  },
 ];
 
 const MarketUpdates: React.FC = () => {
@@ -149,6 +293,7 @@ const MarketUpdates: React.FC = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     const date = new Date();
@@ -174,14 +319,23 @@ const MarketUpdates: React.FC = () => {
     setIsSearching(true);
     setTimeout(() => {
       if (pincode.trim() === "") {
-        setFilteredMarkets(nearbyMarkets);
+        // If no pincode, show random selection of markets
+        const shuffled = [...allMarkets].sort(() => 0.5 - Math.random());
+        setFilteredMarkets(shuffled.slice(0, 12));
       } else {
-        setFilteredMarkets(
-          nearbyMarkets.filter((m) => m.pincode.includes(pincode.trim()))
+        // Filter by pincode and show nearby ones
+        const exactMatches = allMarkets.filter((m) => m.pincode.includes(pincode.trim()));
+        const nearbyMatches = allMarkets.filter((m) => 
+          !m.pincode.includes(pincode.trim()) && 
+          Math.abs(parseInt(m.pincode.slice(0, 3)) - parseInt(pincode.slice(0, 3))) <= 1
         );
+        
+        const combinedResults = [...exactMatches, ...nearbyMatches.slice(0, 8)];
+        setFilteredMarkets(combinedResults.slice(0, 15));
       }
       setIsSearching(false);
-    }, 800);
+      setHasSearched(true);
+    }, 1200);
   };
 
   const getSuggestions = () => {
@@ -500,7 +654,7 @@ const MarketUpdates: React.FC = () => {
             <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-[#465A54]/50" size={18} />
             <input
               type="text"
-              placeholder="Enter Pincode"
+              placeholder="Enter Pincode (optional)"
               value={pincode}
               onChange={(e) => setPincode(e.target.value)}
               className="w-full rounded-xl border-2 border-[#EBEBE6] pl-10 sm:pl-12 pr-4 py-3 text-[#465A54] bg-[#FAFAF9]/50 focus:border-[#465A54] focus:outline-none transition-all duration-300 placeholder-[#465A54]/50 focus:scale-[1.02] text-sm sm:text-base"
@@ -509,7 +663,7 @@ const MarketUpdates: React.FC = () => {
           
           <p className="text-xs text-[#465A54]/60 mt-2 flex items-start gap-1">
             <span className="text-sm flex-shrink-0">💡</span>
-            <span className="leading-relaxed">Search for nearby mandis and marketplaces to sell your goods</span>
+            <span className="leading-relaxed">Search for nearby mandis and marketplaces to sell your goods. Leave pincode empty to see popular markets.</span>
           </p>
           
           <button
@@ -528,62 +682,72 @@ const MarketUpdates: React.FC = () => {
           </button>
         </div>
 
-        {/* Market List */}
-        <div className="px-4 mt-6 space-y-4 pb-4">
-          <h3 className={`font-bold text-lg text-[#465A54] flex items-center gap-2 ${isVisible ? 'animate-slideUp stagger-2' : ''}`}>
-            <span className="text-xl">📍</span>
-            Nearby Markets
-          </h3>
-          
-          {(filteredMarkets.length > 0 ? filteredMarkets : nearbyMarkets).map(
-            (market, index) => (
-              <div
-                key={market.id}
-                className={`glass-effect rounded-2xl p-4 shadow-lg hover-lift cursor-pointer transition-all duration-300 hover:scale-[1.02] ${isVisible ? `animate-slideUp stagger-${index % 3 + 1}` : ''}`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start space-x-3 flex-1 min-w-0">
-                    <div className="bg-gradient-to-br from-[#465A54] to-[#465A54]/80 p-2.5 rounded-xl flex-shrink-0">
-                      <MapPin className="text-white" size={18} />
+        {/* Market List - Only show after search */}
+        {hasSearched && (
+          <div className="px-4 mt-6 space-y-4 pb-4">
+            <h3 className="font-bold text-lg text-[#465A54] flex items-center gap-2 animate-slideUp">
+              <span className="text-xl">📍</span>
+              {filteredMarkets.length > 0 ? `Found ${filteredMarkets.length} Markets` : 'No Markets Found'}
+            </h3>
+            
+            {filteredMarkets.length > 0 ? (
+              filteredMarkets.map((market, index) => (
+                <div
+                  key={market.id}
+                  className={`glass-effect rounded-2xl p-4 shadow-lg hover-lift cursor-pointer transition-all duration-300 hover:scale-[1.02] animate-slideUp stagger-${index % 3 + 1}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start space-x-3 flex-1 min-w-0">
+                      <div className="bg-gradient-to-br from-[#465A54] to-[#465A54]/80 p-2.5 rounded-xl flex-shrink-0">
+                        <MapPin className="text-white" size={18} />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start gap-2 mb-2 flex-wrap">
+                          <h4 className="font-bold text-[#465A54] text-sm sm:text-base leading-tight flex-1 min-w-0">{market.name}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                            market.type === 'Wholesale' 
+                              ? 'bg-blue-100 text-blue-600' 
+                              : 'bg-green-100 text-green-600'
+                          }`}>
+                            {market.type}
+                          </span>
+                        </div>
+                        
+                        <p className="text-sm font-medium text-[#465A54]/80 mb-2 leading-tight">
+                          {market.priceRange}
+                        </p>
+                        
+                        <div className="flex items-center gap-4 text-xs text-[#465A54]/60 flex-wrap">
+                          <span className="flex items-center gap-1">
+                            <MapPin size={10} />
+                            <span className="whitespace-nowrap">{market.distance}</span>
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Star size={10} className="fill-yellow-400 text-yellow-400" />
+                            <span>{market.rating}</span>
+                          </span>
+                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                            {market.pincode}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-2 mb-2 flex-wrap">
-                        <h4 className="font-bold text-[#465A54] text-sm sm:text-base leading-tight flex-1 min-w-0">{market.name}</h4>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                          market.type === 'Wholesale' 
-                            ? 'bg-blue-100 text-blue-600' 
-                            : 'bg-green-100 text-green-600'
-                        }`}>
-                          {market.type}
-                        </span>
-                      </div>
-                      
-                      <p className="text-sm font-medium text-[#465A54]/80 mb-2 leading-tight">
-                        {market.priceRange}
-                      </p>
-                      
-                      <div className="flex items-center gap-4 text-xs text-[#465A54]/60 flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={10} />
-                          <span className="whitespace-nowrap">{market.distance}</span>
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Star size={10} className="fill-yellow-400 text-yellow-400" />
-                          <span>{market.rating}</span>
-                        </span>
-                      </div>
-                    </div>
+                    <button className="p-2 rounded-full hover:bg-[#EBEBE6]/50 transition-all duration-300 hover:scale-110 active:scale-95 flex-shrink-0">
+                      <ChevronLeft className="rotate-180 text-[#465A54]" size={18} />
+                    </button>
                   </div>
-                  
-                  <button className="p-2 rounded-full hover:bg-[#EBEBE6]/50 transition-all duration-300 hover:scale-110 active:scale-95 flex-shrink-0">
-                    <ChevronLeft className="rotate-180 text-[#465A54]" size={18} />
-                  </button>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-[#465A54]/60 animate-fadeIn">
+                <div className="text-4xl mb-2">🔍</div>
+                <p className="text-sm text-center">No markets found for the specified pincode.<br />Try searching without pincode or use a different pincode.</p>
               </div>
-            )
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
@@ -615,4 +779,4 @@ const MarketUpdates: React.FC = () => {
     </div>
   );
 }
-export default MarketUpdates; 
+export default MarketUpdates;
